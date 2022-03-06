@@ -1,0 +1,6 @@
+.idea
+
+.env
+
+**/target
+**/node_modules

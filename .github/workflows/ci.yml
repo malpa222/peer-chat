@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Build
+      id: binary
+      run: cargo build -v -r
+    
+    - name: Prepare artifact
+      run: |
+        mkdir -p output
+        mv Dockerfile output
+        mv ./target/release/net output
+        mv .exampleenv .env
+        mv .env output
+        
+    - uses: actions/upload-artifact@v3
+      with:
+        name: server
+        path: output
+        
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Run tests
+      run: cargo test -v
+
+  dockerize:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/download-artifact@v3
+      with:
+        name: server
+    
+    - name: Prepare environment
+      run: chmod +x net
+      
+    - name: Build Docker image
+      run: |
+        docker build -t server:1.0 .
