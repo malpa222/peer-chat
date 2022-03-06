@@ -1,29 +1,82 @@
-pub mod thread_pool {
-	pub struct ThreadPool {
-		working: i32,
-		max: usize
+use std::thread;
+use std::sync:: {
+	mpsc,
+	Arc,
+	Mutex
+};
+
+type Job = Box<dyn FnOnce() + Send + 'static>;
+
+enum Message {
+	NewJob(Job),
+	Terminate
+}
+
+pub struct ThreadPool {
+	workers: Vec<Worker>,
+	sender: mpsc::Sender<Message>
+}
+
+impl ThreadPool {
+	pub fn new(size: usize) -> ThreadPool {
+		if size <= 0 {
+			panic!("The pool size must be bigger than 0!");
+		}
+
+		let (sender, receiver) = mpsc::channel();
+		let receiver = Arc::new(Mutex::new(receiver));
+
+		let mut workers = Vec::with_capacity(size);
+		for i in 0..size {
+			workers.push(Worker::new(i, Arc::clone(&receiver)));
+		}
+
+		ThreadPool {
+			workers,
+			sender,
+		}
 	}
 
-	impl ThreadPool {
-		pub fn new(size: usize, limit: Option<usize>) -> ThreadPool {
-			match limit {
-				Some(limit) => ThreadPool {
-					working: 0,
-					max: limit
-				},
-				None => ThreadPool {
-					working: 0,
-					max: size
-				},
+	pub fn execute<F>(&self, func: F)
+		where
+			F: FnOnce() + Send + 'static,
+		{
+			let job = Box::new(func);
+			self.sender.send(
+				Message::NewJob(job))
+				.unwrap();
+		}
+}
+
+impl Drop for ThreadPool {
+	fn drop(&mut self) { 
+        for _ in &self.workers {
+            self.sender.send(Message::Terminate).unwrap();
+        }
+
+		for worker in &mut self.workers {
+			if let Some(thread) = worker.thread.take() {
+				thread.join().unwrap();
 			}
 		}
+	}
+}
 
-		pub fn spawn_thread(&mut self) {
-			self.working += 1;
-		}
+struct Worker {
+	thread: Option<thread::JoinHandle<()>>
+}
 
-		pub fn kill_thread(&mut self) {
-			self.working += 1;
-		}
+impl Worker {
+	pub fn new(id: usize, receiver: Arc<Mutex<mpsc::Receiver<Message>>>) -> Worker {
+		let thread = thread::spawn(move || loop {
+			match receiver.lock().unwrap().recv().unwrap() {
+				Message::NewJob(job) => {
+					job()
+				},
+				Message::Terminate => break
+			}
+		});
+
+		Worker { thread: Some(thread) }
 	}
 }
