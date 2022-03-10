@@ -27,8 +27,8 @@ impl ThreadPool {
 		let receiver = Arc::new(Mutex::new(receiver));
 
 		let mut workers = Vec::with_capacity(size);
-		for i in 0..size {
-			workers.push(Worker::new(i, Arc::clone(&receiver)));
+		for _ in 0..size {
+			workers.push(Worker::new(Arc::clone(&receiver)));
 		}
 
 		ThreadPool {
@@ -67,7 +67,7 @@ struct Worker {
 }
 
 impl Worker {
-	pub fn new(id: usize, receiver: Arc<Mutex<mpsc::Receiver<Message>>>) -> Worker {
+	pub fn new(receiver: Arc<Mutex<mpsc::Receiver<Message>>>) -> Worker {
 		let thread = thread::spawn(move || loop {
 			match receiver.lock().unwrap().recv().unwrap() {
 				Message::NewJob(job) => {

@@ -7,5 +7,3 @@ edition = "2021"
 
 [dependencies]
 server = { version = "0.1.0", path = "./server" }
-messenger = { version = "0.1.0", path = "./messenger" }
-crypto = { version = "0.1.0", path = "./crypto" }
