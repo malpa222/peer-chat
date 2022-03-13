@@ -1,5 +1,3 @@
-extern crate base64;
-
 use std::io::prelude::*;
 use std::net:: {
 	Shutdown,
@@ -7,17 +5,16 @@ use std::net:: {
 	TcpStream,
 };
 
-mod utils;
-use utils::parser;
-use utils::thread_pool::ThreadPool;
+use super::utils::parser;
+use super::utils::thread_pool::ThreadPool;
 
-pub struct Server {
+pub struct Listener {
 	thread_pool: ThreadPool,
 }
 
-impl Server {
-	pub fn new(pool_size: usize) -> Server {
-		Server {
+impl Listener {
+    pub fn new(pool_size: usize) -> Listener {
+		Listener {
 			thread_pool: ThreadPool::new(pool_size)
 		}
 	}
@@ -32,17 +29,6 @@ impl Server {
 
 		for stream in listener.incoming().take(2) {
 			self.handle_connection( stream.unwrap())
-		}
-	}
-
-	pub fn send_msg(&self, addr: &String, data: Box<String>) -> Result<(), String> {
-		let mut stream = TcpStream::connect(addr).unwrap();
-		let msg = *parser::prep_message(data);
-
-		if stream.write(&msg.data).unwrap() > 0 {
-			Ok(())
-		} else {
-			Err(String::from("Unable to send..."))
 		}
 	}
 
