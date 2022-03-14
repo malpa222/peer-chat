@@ -1,6 +1,6 @@
 FROM rust
 
-RUN mkdir -p /home/serv
+RUN mkdir -p /home/server
 
-COPY ./src serv
-COPY ./.env serv
+COPY .env /home/server
+COPY net /home/server

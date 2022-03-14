@@ -51,9 +51,8 @@ jobs:
         name: server
     
     - name: Prepare environment
-      run: mkdir -p image
+      run: chmod +x net
       
     - name: Build Docker image
       run: |
         docker build -t server:1.0 .
-        ls -al /var/lib/docker
