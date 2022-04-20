@@ -1,5 +1,5 @@
 import React, { createContext, useState } from "react";
-import ChatList from "./ChatList";
+import ChatBar from "./ChatBar";
 import Conversation from "./Conversation";
 
 import './styles/output.css'
@@ -11,7 +11,7 @@ function App() {
 
 	return (
 		<div className="flex">
-			<ChatList message={message} selectedChat={selectedChat} selectChat={selectChat}/>
+			<ChatBar message={message} selectedChat={selectedChat} selectChat={selectChat}/>
 			<Conversation newMessage={newMessage} />
 		</div>
 	)
