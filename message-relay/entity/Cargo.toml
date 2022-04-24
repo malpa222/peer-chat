@@ -1,0 +1,6 @@
+[package]
+name = "entity"
+version = "0.1.0"
+
+[dependencies]
+sea-orm = { version = "0.7.1", features = [ "sqlx-postgres", "runtime-actix-rustls", "macros" ], default-features = false }
