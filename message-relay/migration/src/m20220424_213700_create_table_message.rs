@@ -18,7 +18,7 @@ impl MigrationTrait for Migration {
             .if_not_exists()
             .col(ColumnDef::new(message::Column::Id).uuid().not_null().primary_key())
             .col(ColumnDef::new(message::Column::UserId).uuid().not_null())
-            .col(ColumnDef::new(message::Column::ConversationId).uuid().not_null())
+            .col(ColumnDef::new(message::Column::ChatId).uuid().not_null())
             .col(ColumnDef::new(message::Column::Payload).string().not_null())
             .col(ColumnDef::new(message::Column::CreatedAt).timestamp().not_null())
             .col(ColumnDef::new(message::Column::UpdatedAt).timestamp().not_null())

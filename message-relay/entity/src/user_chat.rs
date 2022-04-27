@@ -8,7 +8,7 @@ pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: Uuid,
     pub user_id: Uuid,
-    pub conversation_id: Uuid,
+    pub chat_id: Uuid,
     pub created_at: Option<DateTimeUtc>,
     pub updated_at: Option<DateTimeUtc>,
 }
@@ -16,13 +16,13 @@ pub struct Model {
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(
-        belongs_to = "super::conversation::Entity",
-        from = "Column::ConversationId",
-        to = "super::conversation::Column::Id",
+        belongs_to = "super::chat::Entity",
+        from = "Column::ChatId",
+        to = "super::chat::Column::Id",
         on_update = "NoAction",
         on_delete = "NoAction"
     )]
-    Conversation,
+    Chat,
     #[sea_orm(
         belongs_to = "super::user::Entity",
         from = "Column::UserId",
@@ -33,9 +33,9 @@ pub enum Relation {
     User,
 }
 
-impl Related<super::conversation::Entity> for Entity {
+impl Related<super::chat::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::Conversation.def()
+        Relation::Chat.def()
     }
 }
 

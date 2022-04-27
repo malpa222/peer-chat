@@ -3,10 +3,10 @@ extern crate log;
 extern crate dotenv;
 
 use dotenv::dotenv;
-use actix_web::{HttpServer, App};
+use actix_web::{HttpServer, App, web};
 
 mod api;
-mod db_helpers;
+mod db_helper;
 
 macro_rules! envvar {
     ($a:expr) => {
@@ -19,13 +19,14 @@ async fn main() -> std::io::Result<()> {
     env_logger::init();
 
     dotenv().ok();
-    db_helpers::connect_to_db(envvar!("DATABASE_URL")).await;
+    let db = db_helper::connect_to_db(envvar!("DATABASE_URL")).await;
 
     let ip = format!("{}:{}", envvar!("SERVER_ADDR"), envvar!("SERVER_PORT"));
     debug!("Server starting at: {}", ip);
 
     HttpServer::new(move || {
         App::new()
+            .app_data(web::Data::new(db.clone()))
             .service(api::get_messages)
             .service(api::send_message)
     })
