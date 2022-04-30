@@ -1,9 +1,11 @@
 use super::*;
 
-#[derive(Queryable)]
+#[derive(Queryable, Serialize, Deserialize)]
 pub struct User {
     pub id: i32,
     pub email: String,
-    pub created_at: SystemTime,
-    pub updated_at: SystemTime,
+    #[serde(skip)]
+    pub created_at: Option<chrono::NaiveDateTime>,
+    #[serde(skip)]
+    pub updated_at: Option<chrono::NaiveDateTime>,
 }

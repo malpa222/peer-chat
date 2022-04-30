@@ -1,22 +1,29 @@
 use super::*;
 use crate::schema;
 use crate::models::{
-    user::User,
+    // user::User,
     user_chat::UserChat,
 };
 
-pub async fn establish_connection(url: &str) -> PgConnection {
-    PgConnection::establish(url)
-        .expect(&format!("Error connecting to {}", url))
+fn establish_connection() -> Result<PgConnection, String> {
+    match std::env::var("DATABASE_URL") {
+        Ok(var) => {
+            match PgConnection::establish(&var) {
+                Ok(conn) => Ok(conn),
+                Err(err) => Err(err.to_string())
+            }
+        },
+        Err(err) => Err(err.to_string())
+    }
 }
 
-pub async fn get_user_chats(conn: &PgConnection, user: &User) -> Result<Vec<i32>, String> {
+pub async fn get_user_chats(userid: i32) -> Result<Vec<UserChat>, String> {
     use schema::user_chats::dsl::*;
+    let conn = establish_connection()?;
 
     let rows = user_chats
-        .filter(user_id.eq(user.id))
-        .select(chat_id)
-        .load::<i32>(conn);
+        .filter(user_id.eq(userid))
+        .load::<UserChat>(&conn);
 
     match rows {
         Ok(chats) => Ok(chats),

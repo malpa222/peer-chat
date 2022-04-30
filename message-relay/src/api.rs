@@ -1,3 +1,18 @@
+use actix_web::{
+    get,
+    Result,
+    Responder,
+    web::{self, Json},
+};
+
+use crate::repositories::user_repository;
+
+#[get("/chats/get/{user_id}")]
+pub async fn get_chats(path: web::Path<i32>) -> Result<impl Responder> {
+    let chats = user_repository::get_user_chats(path.into_inner()).await;
+    Ok(Json(chats.unwrap()))
+}
+
 // use super::db_helper;
 // 
 // use actix_web::{get, post, web, web::Json, HttpResponse, Responder};
