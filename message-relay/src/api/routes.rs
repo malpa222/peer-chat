@@ -1,6 +1,5 @@
-use crate::models::message::ApiMessage;
-
 use super::*;
+use crate::models::message::ApiMessage;
 
 use actix_web::{
     get,
