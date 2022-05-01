@@ -5,16 +5,18 @@ extern crate dotenv;
 use dotenv::dotenv;
 use actix_web::{App, HttpServer, middleware::Logger};
 
+pub mod api;
+pub mod models;
+pub mod schema;
+
+use api::routes;
+
 macro_rules! getenv {
     ($a:expr) => {
         std::env::var($a).expect(format!("{} is not defined", $a).as_str())
     };
 }
 
-pub mod api;
-pub mod repositories;
-pub mod models;
-pub mod schema;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -30,7 +32,9 @@ async fn main() -> std::io::Result<()> {
 
         App::new()
             .wrap(logger)
-            .service(api::get_chats)
+            .service(routes::get_chats)
+            .service(routes::get_messages)
+            .service(routes::send_message)
     })
     .bind(ip)?
     .run()

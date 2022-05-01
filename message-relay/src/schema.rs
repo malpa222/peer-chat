@@ -11,6 +11,7 @@ table! {
         id -> Int4,
         user_id -> Int4,
         chat_id -> Int4,
+        content -> Varchar,
         created_at -> Nullable<Timestamp>,
         updated_at -> Nullable<Timestamp>,
     }

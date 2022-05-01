@@ -2,6 +2,7 @@ use super::*;
 
 #[derive(Queryable, Serialize, Deserialize)]
 pub struct UserChat {
+    #[serde(skip)]
     pub id: i32,
     pub user_id: i32,
     pub chat_id: i32,
