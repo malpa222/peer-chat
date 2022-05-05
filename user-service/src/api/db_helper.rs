@@ -18,51 +18,51 @@ fn establish_connection() -> Result<PgConnection, String> {
     }
 }
 
-pub async fn get_user(userid: i32) -> Result<User, String> {
+pub async fn get_user(user_id: i32) -> Result<Vec<User>, String> {
     use schema::users::dsl::*;
     let conn = establish_connection()?;
 
     let result = users
-        .filter(user_id.eq(userid))
-        .load::<UserChat>(&conn);
+        .find(user_id)
+        .load::<User>(&conn);
 
-    match rows {
-        Ok(chats) => Ok(chats),
+    match result {
+        Ok(user) => Ok(user),
         Err(err) => Err(err.to_string())
     }
 }
 
-pub async fn update_user(chatid: i32) -> Result<Vec<Message>, String> {
-    use schema::messages::dsl::*;
+pub async fn update_user(user: &User) -> Result<User, String> {
+    use schema::users::dsl::*;
     let conn = establish_connection()?;
 
-    let rows = messages
-        .filter(chat_id.eq(chatid))
-        .load::<Message>(&conn);
+    let result = diesel::update(
+        users.find(&user.id))
+        .set((email.eq(&user.email), username.eq(&user.username)))
+        .get_result(&conn);
 
-    match rows {
-        Ok(msgs) => Ok(msgs),
+    match result {
+        Ok(res) => Ok(res),
         Err(err) => Err(err.to_string())
     }
 }
 
-pub async fn add_user(msg: &ApiMessage) -> Result<usize, String> {
-    use schema::messages::dsl::*;
+pub async fn add_user(user: &User) -> Result<usize, String> {
+    use schema::users::dsl::*;
     let conn = establish_connection()?;
 
-    let rows = diesel::insert_into(messages)
-        .values(msg)
+    let rows = diesel::insert_into(users)
+        .values(user)
         .execute(&conn);
 
     Ok(rows.unwrap())
 }
 
-pub async fn delete_user(msg: &ApiMessage) -> Result<usize, String> {
-    use schema::messages::dsl::*;
+pub async fn delete_user(user_id: i32) -> Result<usize, String> {
+    use schema::users::dsl::*;
     let conn = establish_connection()?;
 
-    let rows = diesel::insert_into(messages)
-        .values(msg)
+    let rows = diesel::delete(users.find(user_id))
         .execute(&conn);
 
     Ok(rows.unwrap())

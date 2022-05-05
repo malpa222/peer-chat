@@ -30,7 +30,7 @@ pub async fn get_user(path: web::Path<i32>) -> Result<impl Responder> {
 }
 
 #[delete("/users/delete/{user_id}")]
-pub async fn delete_user(path: we::Path<i32>) -> Result<impl Responder> {
+pub async fn delete_user(path: web::Path<i32>) -> Result<impl Responder> {
     let result = db_helper::delete_user(path.into_inner()).await;
     Ok(Json(result.unwrap()))
 }
