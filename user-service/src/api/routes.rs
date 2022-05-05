@@ -1,5 +1,5 @@
 use super::*;
-use crate::models::user::User;
+use crate::models::user::*;
 
 use actix_web::{
     get,
@@ -12,13 +12,13 @@ use actix_web::{
 };
 
 #[post("/users/post/")]
-pub async fn add_user(user: Json<User>) -> Result<impl Responder> {
+pub async fn add_user(user: Json<ApiUser>) -> Result<impl Responder> {
     let result = db_helper::add_user(&user).await;
     Ok(Json(result.unwrap()))
 }
 
 #[patch("/users/patch/")]
-pub async fn update_user(user: Json<User>) -> Result<impl Responder> {
+pub async fn update_user(user: Json<ApiUser>) -> Result<impl Responder> {
     let result = db_helper::update_user(&user).await;
     Ok(Json(result.unwrap()))
 }

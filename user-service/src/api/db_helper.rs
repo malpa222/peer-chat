@@ -4,7 +4,7 @@ use diesel::{
     pg::PgConnection,
 };
 use crate::schema;
-use models::user::User;
+use models::user::*;
 
 fn establish_connection() -> Result<PgConnection, String> {
     match std::env::var("DATABASE_URL") { 
@@ -32,12 +32,12 @@ pub async fn get_user(user_id: i32) -> Result<Vec<User>, String> {
     }
 }
 
-pub async fn update_user(user: &User) -> Result<User, String> {
+pub async fn update_user(user: &ApiUser) -> Result<User, String> {
     use schema::users::dsl::*;
     let conn = establish_connection()?;
 
     let result = diesel::update(
-        users.find(&user.id))
+        users.filter(email.eq(&user.email)))
         .set((email.eq(&user.email), username.eq(&user.username)))
         .get_result(&conn);
 
@@ -47,7 +47,7 @@ pub async fn update_user(user: &User) -> Result<User, String> {
     }
 }
 
-pub async fn add_user(user: &User) -> Result<usize, String> {
+pub async fn add_user(user: &ApiUser) -> Result<usize, String> {
     use schema::users::dsl::*;
     let conn = establish_connection()?;
 
