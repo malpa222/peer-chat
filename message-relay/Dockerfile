@@ -1,6 +1,6 @@
 FROM rust:1.60
 
-WORKDIR /usr/src/message_relay
+WORKDIR /usr/src/message-relay
 
 COPY . .
 RUN cargo install --path .
