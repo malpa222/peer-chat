@@ -53,7 +53,7 @@ const Conversation = ({ newMessage, chat }) => {
                     <img
                         className="ml-2 mr-6 my-1 w-8 h-8 cursor-pointer transition ease-in-out
                         duration-499 hover:scale-110"
-                        src={require('./assets/send.png')}
+                        src={require('../assets/send.png')}
                         onClick={sendMessage}
                     />
                 </div>

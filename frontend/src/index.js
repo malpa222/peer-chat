@@ -1,10 +1,13 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
+
+import Auth0Config from './auth/Auth0Config'
 import App from './App';
 
-ReactDOM.render(
-  <React.StrictMode>
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(
+  <Auth0Config>
     <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+  </Auth0Config>
 );

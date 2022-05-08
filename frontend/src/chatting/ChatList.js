@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import Chat from "./Chat"
+import { React, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import classNames from "classnames";
+
+import Chat from "./Chat"
 
 const ChatList = ({ message, currentChat, selectChat }) => {
 	const [text, updateTextbox] = useState('')
@@ -36,7 +37,7 @@ const ChatList = ({ message, currentChat, selectChat }) => {
 	}
 
 	return (
-		<div className="flex p-4 bg-gray-100 bg-opacity-25 border-r border-gray-200 w-1/3 h-screen">
+		<div className="flex p-4 bg-gray-100 bg-opacity-25 border-r border-gray-200 w-1/5 h-screen">
 			<div className="flex-col w-96 my-2 pb-6 px-2">
 				<input className="block px-3 w-full py-2 border border-gray-300
 					bg-gray-200 placeholder-gray-500 text-gray-900 rounded focus:outline-none
@@ -50,27 +51,27 @@ const ChatList = ({ message, currentChat, selectChat }) => {
 					{
 						chats.length === 0
 							? <h1 className="my-8 text-gray-500 text-center">
-								It's so empty here... (┳Д┳) <br />
+								It's so empty here...<br />
 								Maybe add a new chat?</h1>
 							: chats
 					}
 				</div>
 			</div>
-			<img src={require('./assets/new_msg.png')}
+			<img src={require('../assets/new_msg.png')}
 				className={classNames({
 					"mx-4 my-1 w-10 h-10 cursor-pointer transition ease-in-out duration-500 hover:scale-110": true,
 					"hidden": !isSearch
 				})}
 				onClick={() => toggleSearch(false)}
 			/>
-			<img src={require('./assets/plus.png')}
+			<img src={require('../assets/plus.png')}
 				className={classNames({
 					"mx-4 my-1 w-10 h-10 cursor-pointer transition ease-in-out duration-500 hover:scale-110": true,
 					"hidden": isSearch
 				})}
 				onClick={newChat}
 			/>
-			<img src={require('./assets/back.png')}
+			<img src={require('../assets/back.png')}
 				className={classNames({
 					"mx-4 my-1 w-10 h-10 cursor-pointer transition ease-in-out duration-500 hover:scale-110": true,
 					"hidden": isSearch
