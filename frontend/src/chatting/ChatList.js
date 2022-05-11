@@ -1,85 +1,77 @@
-import { React, useState } from "react";
-import { v4 as uuidv4 } from 'uuid';
-import classNames from "classnames";
+import { useState } from 'react'
+import { RadioGroup } from '@headlessui/react'
 
-import Chat from "./Chat"
+const chats = [
+	{
+		name: 'Lorem',
+		msg: 'Ipsum',
+	},
+	{
+		name: 'Dolor',
+		msg: 'Sit',
+	},
+	{
+		name: 'Lorem',
+		msg: 'Ipsum',
+	},
+	{
+		name: 'Dolor',
+		msg: 'Sit',
+	},
+]
 
-const ChatList = ({ message, currentChat, selectChat }) => {
-	const [text, updateTextbox] = useState('')
-	const [isSearch, toggleSearch] = useState(true)
-	const [chats, updateChats] = useState([])
-
-	currentChat = chats.length === 0
-		? null
-		: chats[0]
-
-	const newChat = () => {
-		if (text.length > 0 && text.length < 500) {
-			let id = uuidv4()
-
-			const newChats = chats
-			newChats.push(<Chat
-				id={id}
-				key={id}
-				address={text}
-				message={message}
-				isSelected={false}
-				selectChat={selectChat}
-			/>)
-
-			updateChats(newChats)
-			updateTextbox('')
-		} else if (text.length === 0) {
-			console.log('address empty')
-		} else {
-			console.log('address too long')
-		}
-	}
+export default function Example() {
+	const [selected, setSelected] = useState(chats[0])
 
 	return (
-		<div className="flex p-4 bg-gray-100 bg-opacity-25 border-r border-gray-200 w-1/5 h-screen">
-			<div className="flex-col w-96 my-2 pb-6 px-2">
-				<input className="block px-3 w-full py-2 border border-gray-300
-					bg-gray-200 placeholder-gray-500 text-gray-900 rounded focus:outline-none
-					focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-					placeholder={isSearch ? 'Search' : 'Enter address'}
-					value={text}
-					onChange={e => updateTextbox(e.target.value)}
-					onKeyUp={e => !isSearch && e.key === 'Enter' ? newChat() : null}
-				/>
-				<div>
-					{
-						chats.length === 0
-							? <h1 className="my-8 text-gray-500 text-center">
-								It's so empty here...<br />
-								Maybe add a new chat?</h1>
-							: chats
-					}
-				</div>
+		<div className="w-full px-4 py-16">
+			<div className="mx-auto w-full max-w-md">
+				<RadioGroup value={selected} onChange={setSelected}>
+					<RadioGroup.Label className="sr-only">Server size</RadioGroup.Label>
+					<div className="space-y-2">
+						{chats.map((chat) => (
+							<RadioGroup.Option
+								key={chat.name}
+								value={chat}
+								className={({ active, checked }) =>
+									`${active
+										? 'ring-2 ring-white ring-opacity-60 ring-offset-2 ring-offset-sky-300'
+										: ''
+									}
+                  ${checked ? 'bg-sky-900 bg-opacity-75 text-white' : 'bg-white'
+									}
+                    relative flex cursor-pointer rounded-lg px-5 py-4 shadow-md focus:outline-none`
+								}
+							>
+								{({ active, checked }) => (
+									<>
+										<div className="flex w-full items-center justify-between">
+											<div className="flex items-center">
+												<div className="text-sm">
+													<RadioGroup.Label
+														as="p"
+														className={`font-medium  ${checked ? 'text-white' : 'text-gray-900'
+															}`}
+													>
+														{chat.name}
+													</RadioGroup.Label>
+													<RadioGroup.Description
+														as="span"
+														className={`inline ${checked ? 'text-sky-100' : 'text-gray-500'
+															}`}
+													>
+														<p>{chat.msg}</p>
+													</RadioGroup.Description>
+												</div>
+											</div>
+										</div>
+									</>
+								)}
+							</RadioGroup.Option>
+						))}
+					</div>
+				</RadioGroup>
 			</div>
-			<img src={require('../assets/new_msg.png')}
-				className={classNames({
-					"mx-4 my-1 w-10 h-10 cursor-pointer transition ease-in-out duration-500 hover:scale-110": true,
-					"hidden": !isSearch
-				})}
-				onClick={() => toggleSearch(false)}
-			/>
-			<img src={require('../assets/plus.png')}
-				className={classNames({
-					"mx-4 my-1 w-10 h-10 cursor-pointer transition ease-in-out duration-500 hover:scale-110": true,
-					"hidden": isSearch
-				})}
-				onClick={newChat}
-			/>
-			<img src={require('../assets/back.png')}
-				className={classNames({
-					"mx-4 my-1 w-10 h-10 cursor-pointer transition ease-in-out duration-500 hover:scale-110": true,
-					"hidden": isSearch
-				})}
-				onClick={() => toggleSearch(true)}
-			/>
 		</div>
 	)
 }
-
-export default ChatList;

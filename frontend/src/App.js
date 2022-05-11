@@ -1,9 +1,9 @@
 import React, { createContext, useState } from "react";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 
-import ChatList from "./chatting/ChatList";
+import ChatNav from './chatting/ChatNav';
 import Conversation from "./chatting/Conversation";
-import Navbar from "./auth/Navbar";
+import Profile from "./auth/Profile";
 
 
 function App() {
@@ -12,11 +12,12 @@ function App() {
 
 	return (
 		<div className="flex">
-			<ChatList message={message} selectedChat={selectedChat} selectChat={selectChat}/>
-			<div className="w-full h-screen">
-				<Navbar />
-				<Conversation newMessage={newMessage} />
+			{/* <ChatList message={message} selectedChat={selectedChat} selectChat={selectChat}/> */}
+			<div className="bg-gray-800 w-1/4">
+				<Profile />
+				<ChatNav />
 			</div>
+			<Conversation newMessage={newMessage} />
 		</div>
 	)
 }

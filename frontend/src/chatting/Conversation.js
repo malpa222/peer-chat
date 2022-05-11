@@ -62,7 +62,7 @@ const Conversation = ({ newMessage, chat }) => {
     }
 
     return (
-        <div className="w-2/3 h-screen flex flex-col justify-between">
+        <div className="w-3/4 h-screen flex flex-col justify-between">
             {showChat()}
         </div>
     )
