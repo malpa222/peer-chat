@@ -3,7 +3,7 @@ import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 
 import ChatNav from './chatting/ChatNav';
 import Conversation from "./chatting/Conversation";
-import Profile from "./auth/Profile";
+import ProfileSmall from "./auth/ProfileSmall";
 
 
 function App() {
@@ -13,8 +13,8 @@ function App() {
 	return (
 		<div className="flex">
 			{/* <ChatList message={message} selectedChat={selectedChat} selectChat={selectChat}/> */}
-			<div className="bg-gray-800 w-1/4">
-				<Profile />
+			<div className="bg-gray-100 bg-opacity-25 border-r w-1/4">
+				<ProfileSmall />
 				<ChatNav />
 			</div>
 			<Conversation newMessage={newMessage} />

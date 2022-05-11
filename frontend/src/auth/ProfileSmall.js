@@ -1,13 +1,16 @@
-import { Fragment } from 'react'
-import { Disclosure, Menu, Transition } from '@headlessui/react'
+import { Fragment, useState } from 'react'
+import { Menu, Transition } from '@headlessui/react'
 import { useAuth0 } from '@auth0/auth0-react'
+
+import ProfileDialog from './ProfileDialog'
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(' ')
 }
 
-export default function Profile() {
-	const { user, isAuthenticated, isLoading } = useAuth0();
+export default function ProfileSmall() {
+	const { user, logout, isLoading } = useAuth0();
+    const [open, setOpen] = useState(false)
 
 	if (isLoading)
 		return <div>Loading ...</div>;
@@ -17,17 +20,15 @@ export default function Profile() {
 			<div className='flex items-center'>
 				<Menu as="div" className="relative">
 					<div className='flex items-center'>
-						{/* Profile dropdown */}
 						<Menu.Button className="bg-gray-800 mx-2 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
-							<span className="sr-only">Open user menu</span>
 							<img
 								src={user.picture}
-								className="h-8 w-8 rounded-full"
-								alt=""
+								className="h-12 w-12 rounded-full"
 							/>
 						</Menu.Button>
-						<p className='text-gray-300 mx-2 text-md'>{user.email}</p>
+						<p className='text-black-300 mx-2 text-md'>{user.email}</p>
 					</div>
+					<ProfileDialog open={open} setOpen={setOpen}/>
 					<Transition
 						as={Fragment}
 						enter="transition ease-out duration-100"
@@ -42,9 +43,10 @@ export default function Profile() {
 								{({ active }) => (
 									<a
 										href="#"
-										className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
+										className={classNames(active ? 'bg-gray-200' : '', 'block px-4 py-2 text-sm text-black-700')}
+										onClick={() => setOpen(!open)}
 									>
-										Your Profile
+										Your profile
 									</a>
 								)}
 							</Menu.Item>
@@ -52,17 +54,8 @@ export default function Profile() {
 								{({ active }) => (
 									<a
 										href="#"
-										className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
-									>
-										Settings
-									</a>
-								)}
-							</Menu.Item>
-							<Menu.Item>
-								{({ active }) => (
-									<a
-										href="#"
-										className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
+										className={classNames(active ? 'bg-red-200' : '', 'block px-4 py-2 text-sm text-black-700')}
+										onClick={() => logout({ returnTo: window.location.origin })}
 									>
 										Sign out
 									</a>

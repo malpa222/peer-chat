@@ -11,12 +11,12 @@ const chats = [
 		msg: 'Sit',
 	},
 	{
-		name: 'Lorem',
-		msg: 'Ipsum',
+		name: 'Andrzej',
+		msg: 'Matus',
 	},
 	{
-		name: 'Dolor',
-		msg: 'Sit',
+		name: 'Albrecht',
+		msg: 'Hohenzollern',
 	},
 ]
 
@@ -24,10 +24,9 @@ export default function Example() {
 	const [selected, setSelected] = useState(chats[0])
 
 	return (
-		<div className="w-full px-4 py-16">
-			<div className="mx-auto w-full max-w-md">
+		<div className="w-full py-8">
+			<div className="w-11/12">
 				<RadioGroup value={selected} onChange={setSelected}>
-					<RadioGroup.Label className="sr-only">Server size</RadioGroup.Label>
 					<div className="space-y-2">
 						{chats.map((chat) => (
 							<RadioGroup.Option

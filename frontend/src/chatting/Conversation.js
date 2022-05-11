@@ -24,17 +24,6 @@ const Conversation = ({ newMessage, chat }) => {
     }
 
     const showChat = () => {
-        if (chat === null) {
-            return (
-                <div className="h-full flex justify-center items-center">
-                    <h1 className='text-center'>
-                        You are not talking with anyone... <br />
-                        Try starting a new chat
-                    </h1>
-                </div>
-            )
-        }
-
         return (
             <>
                 <div className='h-full w-full flex flex-col-reverse
