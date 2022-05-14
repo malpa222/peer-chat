@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import classNames from 'classnames';
 
-const Chat = ({ message, address, selected, selectChat }) => {
+export default function Chat({ message, address, selected, selectChat }) {
     return (
         <div 
             className={classNames({
@@ -16,5 +16,3 @@ const Chat = ({ message, address, selected, selectChat }) => {
         </div>
     )
 }
-
-export default Chat;

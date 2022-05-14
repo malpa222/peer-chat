@@ -63,7 +63,7 @@ export default function ProfileDialog(props) {
                                         <div className='my-4'>
                                             <p className='text-gray-700 text-lg'>Username</p>
                                             <input
-                                                className="border focus:border-indigo-500 block w-11/12 pl-7 pr-12 py-2 border-gray-300 rounded-md"
+                                                className="border focus:border-indigo-500/75 block w-11/12 pl-7 pr-12 py-2 border-gray-300 rounded-md shadow-sm"
                                                 placeholder={user.nickname == null ? 'First name' : user.nickname}
                                             />
                                         </div>
@@ -71,7 +71,7 @@ export default function ProfileDialog(props) {
                                         <div className='my-4'>
                                             <p className='text-gray-700 text-lg'>Email address</p>
                                             <input
-                                                className="border focus:border-indigo-500 block w-11/12 pl-7 pr-12 py-2 border-gray-300 rounded-md"
+                                                className="border focus:border-indigo-500/75 block w-11/12 pl-7 pr-12 py-2 border-gray-300 rounded-md shadow-sm"
                                                 placeholder={user.email == null ? 'Email' : user.email}
                                             />
                                         </div>
@@ -88,7 +88,7 @@ export default function ProfileDialog(props) {
                                     </button>
                                     <button
                                         type="button"
-                                        className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                        className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-700 hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                                         onClick={() => props.setOpen(false)}
                                     >
                                         Save

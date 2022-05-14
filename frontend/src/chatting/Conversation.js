@@ -31,10 +31,9 @@ const Conversation = ({ newMessage, chat }) => {
                     {messages}
                 </div>
                 <div className="flex mr-2 my-6 justify-end">
-                    <input className="mx-4 px-3 w-2/3 py-2 border border-gray-300
-                        placeholder-gray-500 text-gray-900 rounded-md focus:outline-none
-                        focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                        placeholder="Write something..."
+                    <input
+                        className="border border-gray-300/75 focus:border-indigo-500/75 block w-2/3 pl-7 pr-12 py-2 mx-4 rounded-md shadow-md"
+                        placeholder="Write something"
                         value={message}
                         onChange={e => setMessage(e.target.value)}
                         onKeyUp={e => e.key === 'Enter' ? sendMessage() : null}

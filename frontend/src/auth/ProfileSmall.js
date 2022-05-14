@@ -20,7 +20,7 @@ export default function ProfileSmall() {
 			<div className='flex items-center'>
 				<Menu as="div" className="relative">
 					<div className='flex items-center'>
-						<Menu.Button className="bg-gray-800 mx-2 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+						<Menu.Button className="bg-gray-800 mx-2 flex text-sm rounded-full shadow-2xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
 							<img
 								src={user.picture}
 								className="h-12 w-12 rounded-full"
