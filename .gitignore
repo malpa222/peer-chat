@@ -1,8 +1,12 @@
+# secrets
+.env
+user-service/token.txt
+
+# build
+**/target
+**/node_modules
+
+# dev
 .idea
 .code
 .vscode
-
-.env
-
-**/target
-**/node_modules
