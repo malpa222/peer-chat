@@ -32,7 +32,6 @@ async fn main() -> std::io::Result<()> {
 
         App::new()
             .wrap(logger)
-            .service(routes::add_user)
             .service(routes::get_user)
             .service(routes::update_user)
             .service(routes::delete_user)

@@ -2,23 +2,23 @@ use super::*;
 use crate::models::user::*;
 use auth_helper;
 
+use serde::Deserialize;
 use actix_web::{
     get,
-    post,
     patch,
     delete,
     Result,
     Responder,
     web::{self, Json, Query}, 
-    error::{ErrorNotFound, ErrorInternalServerError, ErrorBadRequest},
+    error::{ErrorNotFound, ErrorInternalServerError, ErrorBadRequest}, HttpResponse,
 };
-use serde::Deserialize;
 
-#[post("/users/post/")]
-pub async fn add_user(user: Json<ApiUser>) -> Result<impl Responder> {
-    let result = db_helper::add_user(&user).await;
-    Ok(Json(result.unwrap()))
+#[derive(Deserialize)]
+pub struct GetUserQ {
+    id: Option<i32>,
+    auth0_id: Option<String>
 }
+
 
 #[patch("/users/patch/")]
 pub async fn update_user(user: Json<ApiUser>) -> Result<impl Responder> {
@@ -26,12 +26,6 @@ pub async fn update_user(user: Json<ApiUser>) -> Result<impl Responder> {
     Ok(Json(result.unwrap()))
 }
 
-
-#[derive(Deserialize)]
-pub struct GetUserQ {
-    id: Option<i32>,
-    auth0_id: Option<String>
-}
 #[get("/users/get")]
 pub async fn get_user(q: Query<GetUserQ>) -> Result<impl Responder> {
     if let Some(id) = q.id {
@@ -76,7 +70,16 @@ pub async fn get_user(q: Query<GetUserQ>) -> Result<impl Responder> {
 }
 
 #[delete("/users/delete/{user_id}")]
-pub async fn delete_user(path: web::Path<i32>) -> Result<impl Responder> {
-    let result = db_helper::delete_user(path.into_inner()).await;
-    Ok(Json(result.unwrap()))
+pub async fn delete_user(path: web::Path<String>) -> HttpResponse {
+    let id = path.into_inner();
+
+    if let Ok(_) = auth_helper::delete_user(&id).await {
+        if let Err(_) = db_helper::delete_user_auth(&id).await {
+            return HttpResponse::InternalServerError().finish();
+        }
+
+        HttpResponse::NoContent().finish()
+    } else {
+        HttpResponse::Unauthorized().finish()
+    }
 }

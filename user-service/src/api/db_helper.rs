@@ -82,3 +82,14 @@ pub async fn delete_user(user_id: i32) -> Result<usize, Box<dyn Error>> {
 
     Ok(rows.unwrap())
 }
+
+pub async fn delete_user_auth(auth_id: &String) -> Result<usize, Box<dyn Error>> {
+    use schema::users::dsl::*;
+    let conn = establish_connection()?;
+
+    let rows = diesel::delete(
+        users.filter(auth0_id.eq(auth_id)))
+        .execute(&conn);
+
+    Ok(rows.unwrap())
+}

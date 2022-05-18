@@ -78,7 +78,6 @@ async fn get_access_token() -> Result<Box<String>, Box<dyn Error>> {
 }
 
 pub async fn get_user_by_id(id: &String) -> Result<Option<AuthUser>, Box<dyn Error>> {
-    // get user metadata
     let client = reqwest::Client::new();
     let url = format!(r#"https://{}/api/v2/users?q=user_id:"{}"&include_fields=true&fields=user_id,email,nickname"#,
         getenv!("AUTH0_DOMAIN"),
@@ -103,9 +102,8 @@ pub async fn get_user_by_id(id: &String) -> Result<Option<AuthUser>, Box<dyn Err
 }
 
 pub async fn get_user_by_email(email: &String) -> Result<Option<AuthUser>, Box<dyn Error>> {
-    // get user metadata
     let client = reqwest::Client::new();
-    let url = format!(r#"https://{}/api/v2/users?q=email:"{}"&include_fields=true&fields=user_id,email,nickname"#,
+    let url = format!(r#"https://{}/api/v2/users?q=email:"{}"&include_fields=true&fields=user_id,t email,nickname"#,
         getenv!("AUTH0_DOMAIN"),
         email);
 
@@ -127,14 +125,26 @@ pub async fn get_user_by_email(email: &String) -> Result<Option<AuthUser>, Box<d
     }
 }
 
-fn update_user_meta() {
-    // update user in auth0
+pub async fn delete_user(id: &String) -> Result<(), Box<dyn Error>> {
+    let client = reqwest::Client::new();
+    let url = format!(r#"https://{}/api/v2/users/{}"#,
+        getenv!("AUTH0_DOMAIN"),
+        id);
 
-    todo!()
+    let res = client
+        .delete(url)
+        .bearer_auth(get_access_token().await?)
+        .send()
+        .await?;
+
+    if res.status() == 204 {
+        return Ok(());
+    }
+
+    Err(Box::from("Cannot delete user"))
 }
 
-fn delete_user() {
-    // delete user from auth0 database
-
+fn update_user_meta() {
+    // update user in auth0
     todo!()
 }
