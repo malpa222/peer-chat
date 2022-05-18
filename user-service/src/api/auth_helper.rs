@@ -7,7 +7,7 @@ use std::{
 };
 
 use serde::{Serialize, Deserialize};
-use reqwest;
+use reqwest::{self, StatusCode};
 
 use crate::models::user::AuthUser;
 
@@ -23,14 +23,13 @@ struct AuthRes {
     auth_users: Vec<AuthResUser>,
 }
 
-#[derive(Deserialize)]
+#[derive(Serialize, Deserialize)]
 struct AuthResUser {
     user_id: String,
     email: String,
     nickname: String
 }
 
-// return path to the file containg access token
 async fn get_access_token() -> Result<Box<String>, Box<dyn Error>> {
     #[derive(Serialize, Deserialize)]
     struct AuthPayload {
@@ -103,7 +102,7 @@ pub async fn get_user_by_id(id: &String) -> Result<Option<AuthUser>, Box<dyn Err
 
 pub async fn get_user_by_email(email: &String) -> Result<Option<AuthUser>, Box<dyn Error>> {
     let client = reqwest::Client::new();
-    let url = format!(r#"https://{}/api/v2/users?q=email:"{}"&include_fields=true&fields=user_id,t email,nickname"#,
+    let url = format!(r#"https://{}/api/v2/users?q=email:"{}"&include_fields=true&fields=user_id,email,nickname"#,
         getenv!("AUTH0_DOMAIN"),
         email);
 
@@ -112,7 +111,7 @@ pub async fn get_user_by_email(email: &String) -> Result<Option<AuthUser>, Box<d
         .bearer_auth(get_access_token().await?)
         .send()
         .await?;
-
+    
     match res.json::<AuthRes>().await?.auth_users.into_iter().next() {
         Some(user) => {
             Ok(Some(AuthUser {
@@ -144,7 +143,26 @@ pub async fn delete_user(id: &String) -> Result<(), Box<dyn Error>> {
     Err(Box::from("Cannot delete user"))
 }
 
-fn update_user_meta() {
-    // update user in auth0
-    todo!()
+pub async fn update_user(user: AuthUser) -> Result<(), Box<dyn Error>> {
+    let client = reqwest::Client::new();
+    let url = format!(r#"https://{}/api/v2/users/{}"#,
+        getenv!("AUTH0_DOMAIN"),
+        user.auth0_id);
+
+    let mut body = HashMap::new();
+    body.insert("email", user.email);
+    body.insert("nickname", user.username);
+
+    let res = client
+        .patch(url)
+        .bearer_auth(get_access_token().await?)
+        .json(&body)
+        .send()
+        .await?;
+
+    if res.status() == StatusCode::OK {
+        return Ok(());
+    }
+
+    Err(Box::from("Cannot update user"))
 }

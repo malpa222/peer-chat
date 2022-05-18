@@ -21,7 +21,7 @@ pub struct ApiUser {
     pub username: String,
 }
 
-#[derive(Insertable, Deserialize)]
+#[derive(Insertable, Deserialize, Clone)]
 #[table_name="users"]
 pub struct AuthUser {
     pub auth0_id: String,

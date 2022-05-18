@@ -19,11 +19,24 @@ pub struct GetUserQ {
     auth0_id: Option<String>
 }
 
+#[patch("/users/patch/{user_id}")]
+pub async fn update_user(path: web::Path<String>, user: Json<ApiUser>) -> Result<impl Responder> {
+    let user = user.into_inner();
 
-#[patch("/users/patch/")]
-pub async fn update_user(user: Json<ApiUser>) -> Result<impl Responder> {
-    let result = db_helper::update_user(&user).await;
-    Ok(Json(result.unwrap()))
+    let auth = AuthUser {
+        auth0_id: path.into_inner(),
+        email: user.email,
+        username: user.username,
+    };
+
+    if let Ok(_) = auth_helper::update_user(auth.clone()).await {
+        let user = ApiUser { email: auth.email, username: auth.username };
+        db_helper::update_user(&user).await?;
+
+        return Ok(Json(user));
+    }
+
+    Err(ErrorBadRequest("Unable to update user"))
 }
 
 #[get("/users/get")]
