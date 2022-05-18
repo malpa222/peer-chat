@@ -1,38 +1,42 @@
+use std::error::Error;
+
 use super::*;
 use diesel::{
     prelude::*,
     pg::PgConnection,
 };
+
 use crate::schema;
 use models::user::*;
 
-fn establish_connection() -> Result<PgConnection, String> {
-    match std::env::var("DATABASE_URL") { 
-        Ok(var) => {
-            match PgConnection::establish(&var) {
-                Ok(conn) => Ok(conn),
-                Err(err) => Err(err.to_string())
-            }
-        },
-        Err(err) => Err(err.to_string())
+macro_rules! getenv {
+    ($a:expr) => {
+        std::env::var($a).expect(format!("{} is not defined", $a).as_str())
+    };
+}
+
+fn establish_connection() -> Result<PgConnection, Box<dyn Error>> {
+    match PgConnection::establish(&getenv!("DATABASE_URL")) {
+        Ok(conn) => Ok(conn),
+        Err(err) => Err(Box::from(err))
     }
 }
 
-pub async fn get_user(user_id: i32) -> Result<Vec<User>, String> {
+pub fn get_user(user_id: i32) -> Result<Vec<User>, Box<dyn Error>> {
     use schema::users::dsl::*;
     let conn = establish_connection()?;
 
-    let result = users
+    let rows = users
         .find(user_id)
         .load::<User>(&conn);
 
-    match result {
-        Ok(user) => Ok(user),
-        Err(err) => Err(err.to_string())
+    match rows {
+        Ok(row) => Ok(row),
+        Err(err) => Err(Box::from(err))
     }
 }
 
-pub async fn update_user(user: &ApiUser) -> Result<User, String> {
+pub async fn update_user(user: &ApiUser) -> Result<User, Box<dyn Error>> {
     use schema::users::dsl::*;
     let conn = establish_connection()?;
 
@@ -42,12 +46,12 @@ pub async fn update_user(user: &ApiUser) -> Result<User, String> {
         .get_result(&conn);
 
     match result {
-        Ok(res) => Ok(res),
-        Err(err) => Err(err.to_string())
+        Ok(user) => Ok(user),
+        Err(err) => Err(Box::from(err))
     }
 }
 
-pub async fn add_user(user: &ApiUser) -> Result<usize, String> {
+pub async fn add_user(user: &ApiUser) -> Result<usize, Box<dyn Error>> {
     use schema::users::dsl::*;
     let conn = establish_connection()?;
 
@@ -58,7 +62,18 @@ pub async fn add_user(user: &ApiUser) -> Result<usize, String> {
     Ok(rows.unwrap())
 }
 
-pub async fn delete_user(user_id: i32) -> Result<usize, String> {
+pub async fn add_user_auth(user: &AuthUser) -> Result<usize, Box<dyn Error>> {
+    use schema::users::dsl::*;
+    let conn = establish_connection()?;
+
+    let rows = diesel::insert_into(users)
+        .values(user)
+        .execute(&conn);
+
+    Ok(rows.unwrap())
+}
+
+pub async fn delete_user(user_id: i32) -> Result<usize, Box<dyn Error>> {
     use schema::users::dsl::*;
     let conn = establish_connection()?;
 

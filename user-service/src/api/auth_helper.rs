@@ -8,12 +8,26 @@ use std::{
 
 use serde::{Serialize, Deserialize};
 use reqwest;
-// use jsonwebtoken::{encode, decode, Header, Algorithm, Validation, EncodingKey, DecodingKey};
+
+use crate::models::user::AuthUser;
 
 macro_rules! getenv {
     ($a:expr) => {
         std::env::var($a).expect(format!("{} is not defined", $a).as_str())
     };
+}
+
+#[derive(Deserialize)]
+#[serde(transparent)]
+struct AuthRes {
+    auth_users: Vec<AuthResUser>,
+}
+
+#[derive(Deserialize)]
+struct AuthResUser {
+    user_id: String,
+    email: String,
+    nickname: String
 }
 
 // return path to the file containg access token
@@ -63,18 +77,54 @@ async fn get_access_token() -> Result<Box<String>, Box<dyn Error>> {
     }
 }
 
-pub async fn get_user_meta(email: &String) -> Result<Box<HashMap<String, String>>, Box<dyn Error>> {
+pub async fn get_user_by_id(id: &String) -> Result<Option<AuthUser>, Box<dyn Error>> {
     // get user metadata
     let client = reqwest::Client::new();
-    let url = format!("https://{}/api/v2/users?q=email:\"{}\"", getenv!("AUTH0_DOMAIN"), email);
+    let url = format!(r#"https://{}/api/v2/users?q=user_id:"{}"&include_fields=true&fields=user_id,email,nickname"#,
+        getenv!("AUTH0_DOMAIN"),
+        id);
 
-    let response = client
+    let res = client
+        .get(url)
+        .bearer_auth(get_access_token().await?)
+        .send()
+        .await?;
+    
+    match res.json::<AuthRes>().await?.auth_users.into_iter().next() {
+        Some(user) => {
+            Ok(Some(AuthUser {
+                auth0_id: user.user_id,
+                email: user.email,
+                username: user.nickname
+            }))
+        },
+        None => Err(Box::from("User not found"))
+    }
+}
+
+pub async fn get_user_by_email(email: &String) -> Result<Option<AuthUser>, Box<dyn Error>> {
+    // get user metadata
+    let client = reqwest::Client::new();
+    let url = format!(r#"https://{}/api/v2/users?q=email:"{}"&include_fields=true&fields=user_id,email,nickname"#,
+        getenv!("AUTH0_DOMAIN"),
+        email);
+
+    let res = client
         .get(url)
         .bearer_auth(get_access_token().await?)
         .send()
         .await?;
 
-    return Err(Box::from(response.text().await?));
+    match res.json::<AuthRes>().await?.auth_users.into_iter().next() {
+        Some(user) => {
+            Ok(Some(AuthUser {
+                auth0_id: user.user_id,
+                email: user.email,
+                username: user.nickname
+            }))
+        },
+        None => Err(Box::from("User not found"))
+    }
 }
 
 fn update_user_meta() {
