@@ -12,8 +12,17 @@ export default function ProfileSmall() {
 	const { user, logout, isLoading } = useAuth0();
     const [open, setOpen] = useState(false)
 
-	if (isLoading)
+	if (isLoading) {
 		return <div>Loading ...</div>;
+	}
+
+	const getUser = async function() {
+		let res = await fetch(`http://127.0.0.1:8081/users/get?id=0&auth0_id=${user.sub}`)
+		if (res.status > 400) {
+			logout()
+		}
+	}
+	getUser()
 
 	return (
 		<div className='m-4 py-4'>
@@ -26,7 +35,7 @@ export default function ProfileSmall() {
 								className="h-12 w-12 rounded-full"
 							/>
 						</Menu.Button>
-						<p className='text-black-300 mx-2 text-md'>{user.email}</p>
+						<p className='text-black-300 mx-2 w-36 text-md'>{user.nickname}</p>
 					</div>
 					<ProfileDialog open={open} setOpen={setOpen}/>
 					<Transition

@@ -3,7 +3,7 @@ import { Dialog, Transition } from '@headlessui/react'
 import { useAuth0 } from '@auth0/auth0-react'
 
 export default function ProfileDialog({ open, setOpen }) {
-    const { user, isLoading } = useAuth0();
+    const { user, logout, isLoading } = useAuth0();
     const [username, setUsername] = useState(user.nickname == null ? "First name" : user.nickname)
     const [email, setEmail] = useState(user.email == null ? "Email" : user.email)
 
@@ -16,13 +16,20 @@ export default function ProfileDialog({ open, setOpen }) {
                 'Content-Type': 'application/json;charset=utf-8'
             },
             body: JSON.stringify({username, email})
-        });
+        })
 
         const obj = await res.json()
 
         setUsername(obj.username)
         setEmail(obj.email)
-        setOpen(false)
+    }
+
+    const deleteProfile = async () => {
+        await fetch(url + 'delete/' + user.sub, {
+            method: 'DELETE',
+        });
+
+        logout()
     }
 
     if (isLoading)
@@ -104,7 +111,10 @@ export default function ProfileDialog({ open, setOpen }) {
                                     <button
                                         type="button"
                                         className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
-                                        onClick={() => setOpen(false)}
+                                        onClick={() => {
+                                            deleteProfile()
+                                            setOpen(false)
+                                        }}
                                     >
                                         Delete your account
                                     </button>

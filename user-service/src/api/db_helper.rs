@@ -55,6 +55,14 @@ pub async fn add_user(user: &ApiUser) -> Result<usize, Box<dyn Error>> {
     use schema::users::dsl::*;
     let conn = establish_connection()?;
 
+    let u = users
+        .filter(email.like(&user.email))
+        .load::<User>(&conn)?;
+
+    if u.len() >= 1 {
+        return Ok(0);
+    }
+
     let rows = diesel::insert_into(users)
         .values(user)
         .execute(&conn);
