@@ -5,7 +5,7 @@ use super::*;
 pub struct User {
     #[serde(skip)]
     pub id: i32,
-    pub auth0_id: Option<String>,
+    pub auth0_id: String,
     pub email: String,
     pub username: String,
     #[serde(skip)]
@@ -21,7 +21,7 @@ pub struct ApiUser {
     pub username: String,
 }
 
-#[derive(Insertable, Deserialize, Clone)]
+#[derive(Insertable, Serialize, Deserialize, Clone)]
 #[table_name="users"]
 pub struct AuthUser {
     pub auth0_id: String,

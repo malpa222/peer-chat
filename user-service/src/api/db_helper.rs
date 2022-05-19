@@ -36,12 +36,12 @@ pub fn get_user(user_id: i32) -> Result<Vec<User>, Box<dyn Error>> {
     }
 }
 
-pub async fn update_user(user: &ApiUser) -> Result<User, Box<dyn Error>> {
+pub async fn update_user(user: &AuthUser) -> Result<User, Box<dyn Error>> {
     use schema::users::dsl::*;
     let conn = establish_connection()?;
 
     let result = diesel::update(
-        users.filter(email.eq(&user.email)))
+        users.filter(auth0_id.eq(&user.auth0_id)))
         .set((email.eq(&user.email), username.eq(&user.username)))
         .get_result(&conn);
 

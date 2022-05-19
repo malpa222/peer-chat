@@ -20,7 +20,7 @@ const chats = [
 	},
 ]
 
-export default function Example() {
+export default function ChatList() {
 	const [selected, setSelected] = useState(chats[0])
 
 	return (

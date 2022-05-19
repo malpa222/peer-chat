@@ -21,16 +21,19 @@ pub struct GetUserQ {
 
 #[patch("/users/patch/{user_id}")]
 pub async fn update_user(path: web::Path<String>, user: Json<ApiUser>) -> Result<impl Responder> {
+    let id = path.into_inner();
+    let id2 = id.clone();
+
     let user = user.into_inner();
 
     let auth = AuthUser {
-        auth0_id: path.into_inner(),
+        auth0_id: id,
         email: user.email,
         username: user.username,
     };
 
     if let Ok(_) = auth_helper::update_user(auth.clone()).await {
-        let user = ApiUser { email: auth.email, username: auth.username };
+        let user = AuthUser { auth0_id: id2, email: auth.email, username: auth.username };
         db_helper::update_user(&user).await?;
 
         return Ok(Json(user));

@@ -1,17 +1,36 @@
-/* This example requires Tailwind CSS v2.0+ */
-import { Fragment } from 'react'
+import { useState, Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { useAuth0 } from '@auth0/auth0-react'
 
-export default function ProfileDialog(props) {
+export default function ProfileDialog({ open, setOpen }) {
     const { user, isLoading } = useAuth0();
+    const [username, setUsername] = useState(user.nickname == null ? "First name" : user.nickname)
+    const [email, setEmail] = useState(user.email == null ? "Email" : user.email)
+
+    const url = "http://127.0.0.1:8081/users/"
+
+    const updateProfile = async () => {
+        const res = await fetch(url + 'patch/' + user.sub, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify({username, email})
+        });
+
+        const obj = await res.json()
+
+        setUsername(obj.username)
+        setEmail(obj.email)
+        setOpen(false)
+    }
 
     if (isLoading)
         return <div>Loading ...</div>;
 
     return (
-        <Transition.Root show={props.open} as={Fragment}>
-            <Dialog as="div" className="relative z-10" onClose={() => props.setOpen(false)}>
+        <Transition.Root show={open} as={Fragment}>
+            <Dialog as="div" className="relative z-10" onClose={() => setOpen(false)}>
                 <Transition.Child
                     as={Fragment}
                     enter="ease-out duration-300"
@@ -26,7 +45,6 @@ export default function ProfileDialog(props) {
 
                 <div className="fixed z-10 inset-0 overflow-y-auto">
                     <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                        {/* This element is to trick the browser into centering the modal contents. */}
                         <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
                             &#8203;
                         </span>
@@ -64,7 +82,9 @@ export default function ProfileDialog(props) {
                                             <p className='text-gray-700 text-lg'>Username</p>
                                             <input
                                                 className="border focus:border-indigo-500/75 block w-11/12 pl-7 pr-12 py-2 border-gray-300 rounded-md shadow-sm"
-                                                placeholder={user.nickname == null ? 'First name' : user.nickname}
+                                                placeholder={username}
+                                                value={username}
+                                                onChange={e => setUsername(e.target.value)}
                                             />
                                         </div>
 
@@ -72,7 +92,9 @@ export default function ProfileDialog(props) {
                                             <p className='text-gray-700 text-lg'>Email address</p>
                                             <input
                                                 className="border focus:border-indigo-500/75 block w-11/12 pl-7 pr-12 py-2 border-gray-300 rounded-md shadow-sm"
-                                                placeholder={user.email == null ? 'Email' : user.email}
+                                                placeholder={email}
+                                                value={email}
+                                                onChange={e => setEmail(e.target.value)}
                                             />
                                         </div>
                                     </div>
@@ -82,14 +104,14 @@ export default function ProfileDialog(props) {
                                     <button
                                         type="button"
                                         className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
-                                        onClick={() => props.setOpen(false)}
+                                        onClick={() => setOpen(false)}
                                     >
                                         Delete your account
                                     </button>
                                     <button
                                         type="button"
                                         className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-700 hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                                        onClick={() => props.setOpen(false)}
+                                        onClick={() => updateProfile()}
                                     >
                                         Save
                                     </button>
