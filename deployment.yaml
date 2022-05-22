@@ -17,13 +17,6 @@ spec:
       containers:
       - name: peerchat-front
         image: malpa222/peerchat:frontend
-        resources:
-          requests:
-            cpu: 100m
-            memory: 128Mi
-          limits:
-            cpu: 250m
-            memory: 256Mi
         ports:
         - containerPort: 3000
 ---
@@ -34,7 +27,8 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-  - port: 80
+  - protocol: TCP
+    port: 80
     targetPort: 3000
   selector:
-    app: azure-vote-front
+    app: peerchat-front
