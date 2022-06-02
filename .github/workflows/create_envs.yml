@@ -1,0 +1,24 @@
+on:
+  push:
+    branches:
+      - feature/aks
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  create-envs:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - 
+      name: Checkout
+      uses: actions/checkout@v2
+    - 
+      name: frontend
+      run: |
+        cd frontend/
+        echo "AUTH0_CLIENTID=${{ secrets.AUTH0_CLIENTID }}" >> .env
+        echo "AUTH0_DOMAIN=${{ secrets.AUTH0_DOMAIN }}" >> .env
+        echo "AUTH0_SECRET=${{ secrets.AUTH0_SECRET }}" >> .env
+
+        cat .env
