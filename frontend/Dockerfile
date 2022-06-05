@@ -8,7 +8,9 @@ COPY public/ public/
 COPY src/ src/
 COPY package.json ./
 COPY package-lock.json ./
-RUN npm install && npm install -g serve && npm run build
+RUN npm install && \
+    npm install -g serve && \
+    npm run build --production
 
 COPY . ./
 EXPOSE 3000
