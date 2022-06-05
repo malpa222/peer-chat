@@ -17,6 +17,7 @@ spec:
       containers:
       - name: peerchat-front
         image: malpa222/peerchat:frontend
+        imagePullPolicy: Always
         ports:
         - containerPort: 3000
 ---

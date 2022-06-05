@@ -4,11 +4,13 @@ WORKDIR /usr/src/frontend
 
 ENV PATH /usr/src/frontend/node_modules/.bin:$PATH
 COPY .env ./
+COPY public/ public/
+COPY src/ src/
 COPY package.json ./
 COPY package-lock.json ./
-RUN npm install
+RUN npm install && npm install -g serve && npm run build
 
 COPY . ./
 EXPOSE 3000
 
-CMD ["npm", "start"]
+CMD ["serve", "-s", "-d", "build"]

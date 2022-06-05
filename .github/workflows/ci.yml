@@ -1,7 +1,6 @@
 on:
   push:
   workflow_dispatch:
-  pull_request:
 
 env:
   CARGO_TERM_COLOR: always
@@ -50,11 +49,11 @@ jobs:
       run: | 
         cd user-service
         cargo build -r
-        
-  publish-to-dockerhub:
-    needs: [build-frontend, build-message-relay, build-user-service]
+  
+  publish-frontend:
+    needs: build-frontend
     runs-on: ubuntu-latest
-    
+  
     steps:
     -
       name: Checkout
@@ -78,17 +77,3 @@ jobs:
         context: ./frontend
         push: true
         tags: malpa222/peerchat:frontend
-    - 
-      name: push-message-relay
-      uses: docker/build-push-action@v2
-      with:
-        context: ./message-relay
-        push: true
-        tags: malpa222/peerchat:message-relay
-    - 
-      name: push-user-service
-      uses: docker/build-push-action@v2
-      with:
-        context: ./user-service
-        push: true
-        tags: malpa222/peerchat:user-service
