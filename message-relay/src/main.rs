@@ -27,14 +27,15 @@ async fn main() -> std::io::Result<()> {
     dotenv().ok();
 
     let ip = format!("{}:{}", getenv!("SERVER_ADDR"), getenv!("SERVER_PORT"));
-    println!("Server starting at: {}", ip);
 
-    thread::spawn(move || {
+    println!("Starting message consumer");
+    thread::spawn(|| {
         mq_helper::cons00m().unwrap_or_else(|err| {
             panic!("{}", err);
         });
     });
 
+    println!("Server starting at: {}", ip);
     HttpServer::new(move || {
         let logger = Logger::default();
 

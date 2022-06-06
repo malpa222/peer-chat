@@ -9,3 +9,9 @@ pub struct User {
     #[serde(skip)]
     pub updated_at: Option<chrono::NaiveDateTime>,
 }
+
+#[derive(Insertable, Serialize, Deserialize)]
+#[table_name="users"]
+pub struct ApiUser {
+    pub email: String,
+}

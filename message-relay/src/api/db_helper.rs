@@ -1,9 +1,11 @@
+use std::error::Error;
+
 use super::*;
 use diesel::{
     prelude::*,
     pg::PgConnection,
 };
-use crate::schema;
+use crate::{schema, models::user::{User, ApiUser}};
 use models::{
     message::{Message, ApiMessage},
     user_chat::UserChat,
@@ -19,6 +21,25 @@ fn establish_connection() -> Result<PgConnection, String> {
         },
         Err(err) => Err(err.to_string())
     }
+}
+
+pub fn add_user(user: ApiUser) -> Result<usize, Box<dyn Error>> {
+    use schema::users::dsl::*;
+    let conn = establish_connection()?;
+
+    let u = users
+        .filter(email.like(&user.email))
+        .load::<User>(&conn)?;
+
+    if u.len() >= 1 {
+        return Ok(0);
+    }
+
+    let rows = diesel::insert_into(users)
+        .values(user)
+        .execute(&conn);
+
+    Ok(rows.unwrap())
 }
 
 pub async fn get_user_chats(userid: i32) -> Result<Vec<UserChat>, String> {
