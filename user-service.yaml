@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: peerchat-user-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: peerchat-user-service
+  template:
+    metadata:
+      labels:
+        app: peerchat-user-service
+    spec:
+      nodeSelector:
+        "kubernetes.io/os": linux
+      containers:
+      - name: peerchat-user-service
+        image: malpa222/peerchat:user-service
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: peerchat-user-service
+spec:
+  type: ClusterIP
+  ports:
+  - protocol: TCP
+    port: 5000
+    targetPort: 5000
+  selector:
+    app: peerchat-user-service
