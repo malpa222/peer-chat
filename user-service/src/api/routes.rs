@@ -67,12 +67,16 @@ pub async fn get_user(q: Query<GetUserQ>) -> Result<impl Responder> {
                         Some(user) => { // exists
                             match db_helper::add_user_auth(&user).await {
                                 Ok(_) =>  {
-                                    mq_helper::publish();
+                                    match mq_helper::publish(&user) {
+                                        Ok(_) => {
+                                            return Ok(Json(ApiUser {
+                                                email: user.email,
+                                                username: user.username,
+                                            }));
+                                        },
+                                        Err(_) => return Err(ErrorInternalServerError("Couldn't update the state. Try again"))
+                                    }
 
-                                    return Ok(Json(ApiUser {
-                                        email: user.email,
-                                        username: user.username,
-                                    })) // Delete was ok
                                 },
                                 Err(_) => return Err(ErrorInternalServerError("Problem with registration. Try again.")) // trouble adding user
                             }

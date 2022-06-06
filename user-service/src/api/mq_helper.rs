@@ -1,6 +1,8 @@
 use amiquip::{Connection, Exchange, Publish, Result};
 
-pub fn publish() -> Result<()> {
+use crate::models::user;
+
+pub fn publish(user: &user::AuthUser) -> Result<()> {
     // Open connection.
     let mut connection = Connection::insecure_open("amqp://guest:guest@172.17.0.2:5672")?;
 
@@ -11,7 +13,13 @@ pub fn publish() -> Result<()> {
     let exchange = Exchange::direct(&channel);
 
     // Publish a message to the "hello" queue.
-    exchange.publish(Publish::new("hello there".as_bytes(), "users"))?;
+    match serde_json::to_string(&user) {
+        Ok(u) => {
+            exchange.publish(
+                Publish::new(u.as_bytes(), "users"))?;
+        },
+        Err(_) => panic!()
+    }
 
     connection.close()
 }
