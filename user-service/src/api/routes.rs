@@ -1,6 +1,7 @@
 use super::*;
 use crate::models::user::*;
 use auth_helper;
+use mq_helper;
 
 use serde::Deserialize;
 use actix_web::{
@@ -15,7 +16,6 @@ use actix_web::{
 
 #[derive(Deserialize)]
 pub struct GetUserQ {
-    id: Option<i32>,
     auth0_id: Option<String>
 }
 
@@ -66,10 +66,14 @@ pub async fn get_user(q: Query<GetUserQ>) -> Result<impl Responder> {
                     match auth_helper::get_user_by_id(auth_id).await? { // check if user exists in auth0
                         Some(user) => { // exists
                             match db_helper::add_user_auth(&user).await {
-                                Ok(_) => return Ok(Json(ApiUser {
-                                    email: user.email,
-                                    username: user.username,
-                                })), // Delete was ok
+                                Ok(_) =>  {
+                                    mq_helper::publish();
+
+                                    return Ok(Json(ApiUser {
+                                        email: user.email,
+                                        username: user.username,
+                                    })) // Delete was ok
+                                },
                                 Err(_) => return Err(ErrorInternalServerError("Problem with registration. Try again.")) // trouble adding user
                             }
                         },

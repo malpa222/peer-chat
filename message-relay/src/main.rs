@@ -2,6 +2,7 @@
 extern crate diesel;
 extern crate dotenv;
 
+use std::thread;
 use dotenv::dotenv;
 use actix_web::{App, HttpServer, middleware::Logger};
 
@@ -10,6 +11,7 @@ pub mod models;
 pub mod schema;
 
 use api::routes;
+use api::mq_helper;
 
 macro_rules! getenv {
     ($a:expr) => {
@@ -26,6 +28,12 @@ async fn main() -> std::io::Result<()> {
 
     let ip = format!("{}:{}", getenv!("SERVER_ADDR"), getenv!("SERVER_PORT"));
     println!("Server starting at: {}", ip);
+
+    thread::spawn(move || {
+        mq_helper::cons00m().unwrap_or_else(|err| {
+            panic!("{}", err);
+        });
+    });
 
     HttpServer::new(move || {
         let logger = Logger::default();
