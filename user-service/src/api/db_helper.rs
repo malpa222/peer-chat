@@ -36,6 +36,20 @@ pub fn get_user(user_id: i32) -> Result<Vec<User>, Box<dyn Error>> {
     }
 }
 
+pub fn get_user_auth(auth0_id_api: &String) -> Result<Vec<User>, Box<dyn Error>>{
+    use schema::users::dsl::*;
+    let conn = establish_connection()?;
+
+    let result = users
+        .filter(auth0_id.eq(auth0_id_api))
+        .load::<User>(&conn);
+    
+    match result {
+        Ok(user) => Ok(user),
+        Err(err) => Err(Box::from(err))
+    }
+}
+
 pub async fn update_user(user: &AuthUser) -> Result<User, Box<dyn Error>> {
     use schema::users::dsl::*;
     let conn = establish_connection()?;
