@@ -30,7 +30,7 @@ async fn main() -> std::io::Result<()> {
 
     println!("Starting message consumer");
     thread::spawn(|| {
-        mq_helper::cons00m().unwrap_or_else(|err| {
+        mq_helper::consume().unwrap_or_else(|err| {
             panic!("{}", err);
         });
     });

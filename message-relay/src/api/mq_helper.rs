@@ -5,7 +5,7 @@ use crate::models::user::ApiUser;
 
 use super::db_helper;
 
-pub fn cons00m() -> Result<()> {
+pub fn consume() -> Result<()> {
     let mut connection = Connection::insecure_open("amqp://guest:guest@172.17.0.2:5672")?;
 
     let channel = connection.open_channel(None)?;

@@ -5,10 +5,13 @@ WORKDIR /usr/src/user-service
 COPY . .
 
 # run migrations
-RUN cargo install diesel_cli --no-default-features --features postgres && \
-    diesel setup && \
-    diesel migration run
+RUN cargo install diesel_cli --no-default-features --features postgres
+
+# build project
+# RUN cargo build --release &&\ 
+# cp target/release/user-service . &&\
+# chmod +x docker_start.sh
 
 EXPOSE 5000
 
-CMD ["cargo", "run", "-r"]
+CMD ["cargo", "run"]
