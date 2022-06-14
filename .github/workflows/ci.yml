@@ -71,6 +71,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  zap-analysis:
+    name: Zap
+    runs-on: ubuntu-latest
+    steps:
+      - name: ZAP Scan
+        uses: zaproxy/action-baseline@v0.7.0
+        with:
+          target: 'https://peerchat.germanywestcentral.cloudapp.azure.com/'
   
   publish-user-service:
     needs: [build-user-service, sonar-analysis]
