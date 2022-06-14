@@ -139,6 +139,7 @@ jobs:
       name: message-env
       run: |
         cd message-relay/
+        ls -lR ~
         cp ~/download/message-relay .
         echo "SERVER_ADDR=0.0.0.0" >> .env
         echo "SERVER_PORT=8080" >> .env
