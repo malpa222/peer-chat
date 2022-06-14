@@ -48,12 +48,18 @@ jobs:
     - 
       name: Checkout
       uses: actions/checkout@v2
-
     - 
       name: Build
       run: | 
         cd user-service
         cargo build -r
+    -
+      name: Upload
+      run: ls -Rl
+     # uses: actions/upload-artifact@v3
+     # with:
+     #   name: user-service
+     #   path: target/release/user-service
 
   sonar-analysis:
     name: SonarCloud
