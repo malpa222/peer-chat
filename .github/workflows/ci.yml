@@ -33,7 +33,6 @@ jobs:
       run: | 
         cd message-relay
         cargo build -r
-        ls -l
     -
       name: Upload
       uses: actions/upload-artifact@v3
@@ -82,7 +81,7 @@ jobs:
           target: 'https://peerchat.germanywestcentral.cloudapp.azure.com/'
   
   publish-user-service:
-    needs: [build-user-service, sonar-analysis]
+    needs: [build-user-service, sonar-analysis, zap-analysis]
     runs-on: ubuntu-latest
   
     steps:
@@ -161,7 +160,7 @@ jobs:
         name: Build
 
   publish-frontend:
-    needs: [build-frontend, sonar-analysis]
+    needs: [build-frontend, sonar-analysis, zap-analysis]
     runs-on: ubuntu-latest
   
     steps:
