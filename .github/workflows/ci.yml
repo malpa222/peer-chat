@@ -39,7 +39,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: message-relay
-        path: target/release/message-relay
+        path: message-relay/target/release/message-relay
 
   build-user-service:
     runs-on: ubuntu-latest
@@ -55,11 +55,10 @@ jobs:
         cargo build -r
     -
       name: Upload
-      run: ls -Rl
-     # uses: actions/upload-artifact@v3
-     # with:
-     #   name: user-service
-     #   path: target/release/user-service
+      uses: actions/upload-artifact@v3
+      with:
+        name: user-service
+        path: user-service/target/release/user-service
 
   sonar-analysis:
     name: SonarCloud
