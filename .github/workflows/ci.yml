@@ -38,7 +38,7 @@ jobs:
       name: Upload
       uses: actions/upload-artifact@v3
       with:
-        name: message-relay
+        name: message-relay-bin
         path: message-relay/target/release/message-relay
 
   build-user-service:
@@ -57,7 +57,7 @@ jobs:
       name: Upload
       uses: actions/upload-artifact@v3
       with:
-        name: user-service
+        name: user-service-bin
         path: user-service/target/release/user-service
 
   sonar-analysis:
@@ -81,8 +81,14 @@ jobs:
       name: Checkout
       uses: actions/checkout@v2
     -
+      name: Download a single artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: user-service-bin
+    -
       name: users-env
       run: |
+        ls -l
         cd user-service/
         echo "AUTH0_DOMAIN=${{ secrets.AUTH0_DOMAIN }}" >> .env
         echo "AUTH0_CLIENTID=${{ secrets.AUTH0_CLIENTID }}" >> .env
