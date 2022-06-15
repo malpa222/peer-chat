@@ -9,10 +9,9 @@ COPY src/ src/
 COPY package.json ./
 COPY package-lock.json ./
 RUN npm install && \
-    npm install -g serve && \
     npm run build --production
 
 COPY . ./
 EXPOSE 3000
 
-CMD ["serve", "-s", "-d", "build"]
+CMD ["npm", "run", "start2"]

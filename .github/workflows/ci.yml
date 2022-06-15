@@ -161,7 +161,7 @@ jobs:
         name: Build
 
   publish-frontend:
-    needs: [build-frontend, sonar-analysis, zap-analysis]
+    needs: [build-frontend, sonar-analysis]
     runs-on: ubuntu-latest
   
     steps:
