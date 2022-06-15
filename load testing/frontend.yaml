@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: peerchat-front
+  name: frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: peerchat-front
+      app: frontend
   template:
     metadata:
       labels:
-        app: peerchat-front
+        app: frontend
     spec:
       nodeSelector:
         "kubernetes.io/os": linux
@@ -29,14 +29,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: peerchat-front
+  name: frontend
   annotations:
     prometheus.io/scrape: 'true'
+    prometheus.io/port: '3000'
 spec:
-  type: ClusterIP
+  type: NodePort
   ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 3000
+  - port: 3000
   selector:
-    app: peerchat-front
+    app: frontend

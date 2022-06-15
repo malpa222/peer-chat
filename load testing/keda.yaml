@@ -4,7 +4,7 @@ metadata:
  name: nginx-scale 
 spec:
   minReplicaCount: 1
-  maxReplicaCount: 20
+  maxReplicaCount: 30
   pollingInterval: 5
   cooldownPeriod:  5
   scaleTargetRef: 
@@ -13,8 +13,8 @@ spec:
   triggers:
     - type: prometheus
       metadata: 
-        serverAddress: http://prometheus-server 
-        metricName: nginx_connections_active_keda 
-        query: | 
-          sum(avg_over_time(nginx_ingress_nginx_connections_active{app="main-nginx-ingress"}[30])) 
-        threshold: "100" 
+        serverAddress: http://192.168.49.2:30010
+        metricName: nodejs_http_request_duration_seconds_bucket
+        query: |
+          nodejs_http_request_duration_seconds_bucket{app="frontend"}
+          threshold: 1.5

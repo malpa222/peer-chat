@@ -1,37 +1,22 @@
 const express = require('express');
-const favicon = require('express-favicon');
 const path = require('path');
 const prometheus = require('express-prom-bundle')
 
-const log4js = require("log4js");
-log4js.configure({
-  appenders: { server: { type: "stdout" } },
-  categories: { default: { appenders: ["server"], level: "info" } }
-});
-const logger = log4js.getLogger("server");
 
-// This will create the /metrics endpoint for you and expose Node default
-// metrics.
-const metricsMiddleware = prometheus({
+const metrics = prometheus({
   includeMethod: true,
   includePath: true,
-  promClient: { collectDefaultMetrics: {} }
+  promClient: { collectDefaultMetrics: {} },
+  includeUp: false,
+  httpDurationMetricName: 'nodejs_http_request_duration_seconds',
+  buckets: [0.25, 0.5, 0.75, 1, 1.5, 2, 2.5, 5, 10]
 })
-
 const port = 3000;
 
 const app = express();
-app.use(favicon(__dirname + '/build/favicon.ico'));
-
-// the __dirname is the current directory from where the script is running
-app.use(express.static(__dirname));
-app.use(express.static(path.join(__dirname, 'build')));
-app.use(metricsMiddleware);
-
-app.get('/*', function (req, res) {
-  res.sendFile(path.join(__dirname, 'build', 'index.html')); // <-- change if not using index.html
-});
+app.use(metrics);
+app.use(express.static(path.join(__dirname, 'build')))
 
 app.listen(port, () => {
-  logger.info(`Starting server on port ${port}....`);
+  console.log(`Starting server on port ${port}....`);
 });

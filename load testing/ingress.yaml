@@ -1,17 +1,21 @@
 apiVersion: networking.k8s.io/v1 
 kind: Ingress 
 metadata: 
-  name: peerchat-front
+  name: frontend
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9113"
+    prometheus.io/scheme: http
 spec: 
   ingressClassName: nginx 
   rules: 
-    - host: "peerchat.com" 
-      http: 
-        paths: 
-          - backend: 
-              service: 
-                name: peerchat-front
-                port: 
-                  number: 80 
-            path: / 
-            pathType: Prefix 
+  - host: peerchat.test 
+    http: 
+      paths: 
+        - backend: 
+            service: 
+              name: frontend
+              port: 
+                number: 3000
+          path: /(.*)
+          pathType: Prefix 
