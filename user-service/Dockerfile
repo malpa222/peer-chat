@@ -14,4 +14,4 @@ RUN cargo install diesel_cli --no-default-features --features postgres
 
 EXPOSE 5000
 
-CMD ["cargo", "run"]
+CMD ["./user-service"]

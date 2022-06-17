@@ -5,4 +5,4 @@ WORKDIR /usr/src/message-relay
 COPY . .
 EXPOSE 5001
 
-CMD ["cargo", "run"]
+CMD ["./message-relay"]

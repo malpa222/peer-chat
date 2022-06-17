@@ -98,7 +98,7 @@ jobs:
       name: users-env
       run: |
         cd user-service/
-        cp ~/download/user-service-bin .
+        cp /home/runner/download/user-service .
         echo "AUTH0_DOMAIN=${{ secrets.AUTH0_DOMAIN }}" >> .env
         echo "AUTH0_CLIENTID=${{ secrets.AUTH0_CLIENTID }}" >> .env
         echo "AUTH0_CLIENT_SECRET=${{ secrets.USERS_AUTH0_SECRET }}" >> .env
@@ -139,8 +139,7 @@ jobs:
       name: message-env
       run: |
         cd message-relay/
-        ls -lR ~
-        cp ~/download/message-relay .
+        cp /home/runner/download/message-relay .
         echo "SERVER_ADDR=0.0.0.0" >> .env
         echo "SERVER_PORT=8080" >> .env
         echo "DATABASE_URL=${{ secrets.USERS_DB_URL }}" >> .env
