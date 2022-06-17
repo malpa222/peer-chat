@@ -6,6 +6,7 @@ COPY . .
 
 # run migrations
 RUN cargo install diesel_cli --no-default-features --features postgres
+RUN chmod +x user-service
 
 # build project
 # RUN cargo build --release &&\ 
