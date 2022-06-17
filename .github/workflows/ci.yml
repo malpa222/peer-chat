@@ -141,7 +141,7 @@ jobs:
         cd message-relay/
         cp /home/runner/download/message-relay .
         echo "SERVER_ADDR=0.0.0.0" >> .env
-        echo "SERVER_PORT=8080" >> .env
+        echo "SERVER_PORT=5001" >> .env
         echo "DATABASE_URL=${{ secrets.USERS_DB_URL }}" >> .env
     -
       name: Login to DockerHub
