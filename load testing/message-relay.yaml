@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend
+  name: message-relay
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: frontend
+      app: message-relay
   template:
     metadata:
       labels:
-        app: frontend
+        app: message-relay
     spec:
       nodeSelector:
         "kubernetes.io/os": linux
       containers:
-      - name: frontend
-        image: malpa222/peerchat:frontend
+      - name: message-relay
+        image: malpa222/peerchat:message-relay
         imagePullPolicy: Always
         ports:
-        - containerPort: 3000
+        - containerPort: 5001
         resources:
           limits:
             cpu: 400m
@@ -29,13 +29,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend
+  name: message-relay
   annotations:
     prometheus.io/scrape: 'true'
-    prometheus.io/port: '3000'
+    prometheus.io/port: '5001'
 spec:
   type: NodePort
   ports:
-  - port: 3000
+  - port: 5001
   selector:
-    app: frontend
+    app: message-relay
