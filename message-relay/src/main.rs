@@ -5,6 +5,7 @@ extern crate dotenv;
 use std::thread;
 use dotenv::dotenv;
 use actix_web::{App, HttpServer, middleware::Logger};
+use actix_web_prom::PrometheusMetricsBuilder;
 
 pub mod api;
 pub mod models;
@@ -18,7 +19,6 @@ macro_rules! getenv {
         std::env::var($a).expect(format!("{} is not defined", $a).as_str())
     };
 }
-
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -35,12 +35,18 @@ async fn main() -> std::io::Result<()> {
         });
     });
 
+    let prometheus = PrometheusMetricsBuilder::new("api")
+        .endpoint("/metrics")
+        .build()
+        .unwrap();
+
     println!("Server starting at: {}", ip);
     HttpServer::new(move || {
         let logger = Logger::default();
 
         App::new()
             .wrap(logger)
+            .wrap(prometheus.clone())
             .service(routes::get_chats)
             .service(routes::get_messages)
             .service(routes::send_message)
