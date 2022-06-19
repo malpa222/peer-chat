@@ -32,9 +32,9 @@ metadata:
   name: user-service
   annotations:
     prometheus.io/scrape: 'true'
-    prometheus.io/port: '5001'
+    prometheus.io/port: '5000'
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
   - port: 5000
   selector:

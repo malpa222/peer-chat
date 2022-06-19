@@ -29,11 +29,11 @@ async fn main() -> std::io::Result<()> {
     let ip = format!("{}:{}", getenv!("SERVER_ADDR"), getenv!("SERVER_PORT"));
 
     println!("Starting message consumer");
-    thread::spawn(|| {
-        mq_helper::consume().unwrap_or_else(|err| {
-            panic!("{}", err);
-        });
-    });
+    // thread::spawn(|| {
+    //     mq_helper::consume().unwrap_or_else(|err| {
+    //         panic!("{}", err);
+    //     });
+    // });
 
     let prometheus = PrometheusMetricsBuilder::new("api")
         .endpoint("/metrics")

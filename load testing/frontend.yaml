@@ -34,7 +34,7 @@ metadata:
     prometheus.io/scrape: 'true'
     prometheus.io/port: '3000'
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
   - port: 3000
   selector:

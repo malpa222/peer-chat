@@ -37,3 +37,43 @@ spec:
         metricName: nodejs_http_request_duration_seconds_bucket
         query: rate(nodejs_http_request_duration_seconds_bucket{le="5"}[10m])
         threshold: "200"
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata: 
+  name: users-scale 
+spec:
+  scaleTargetRef: 
+    kind: Deployment 
+    name: user-service
+  minReplicaCount: 1
+  maxReplicaCount: 30
+  pollingInterval: 5
+  cooldownPeriod:  5
+  triggers:
+    - type: prometheus
+      metadata: 
+        serverAddress: http://prometheus-server 
+        metricName: api_http_requests_duration_seconds_bucket
+        query: rate(api_http_requests_duration_seconds_bucket{service="user-service",le="10"}[10m])
+        threshold: "200"
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata: 
+  name: messages-scale 
+spec:
+  scaleTargetRef: 
+    kind: Deployment 
+    name: message-relay
+  minReplicaCount: 1
+  maxReplicaCount: 30
+  pollingInterval: 5
+  cooldownPeriod:  5
+  triggers:
+    - type: prometheus
+      metadata: 
+        serverAddress: http://prometheus-server 
+        metricName: api_http_requests_duration_seconds_bucket
+        query: rate(api_http_requests_duration_seconds_bucket{service="message-relay",le="10"}[10m])
+        threshold: "200"
